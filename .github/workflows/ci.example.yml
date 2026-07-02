@@ -1,0 +1,67 @@
+# ==============================================================================
+# CI para Django — Gestor de Tareas.
+# Renómbralo a `ci.yml` para activarlo. Mientras tenga la extensión `.example`,
+# GitHub no lo ejecuta (opt-in). Los pasos ya están adaptados a este proyecto.
+# ==============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar herramientas de lint
+        run: pip install ruff
+      - name: Ruff
+        run: ruff check .
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_DB: gestor_tareas_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      SECRET_KEY: ci-secret-key-not-for-production
+      DEBUG: "False"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: gestor_tareas_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: "5432"
+    steps:
+      - uses: actions/checkout@v7
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+      - name: Verificar migraciones
+        run: python manage.py makemigrations --check --dry-run
+      - name: Ejecutar tests
+        run: python manage.py test
