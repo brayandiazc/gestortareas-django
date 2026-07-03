@@ -1,0 +1,47 @@
+# ==============================================================================
+# .gitignore — Gestor de Tareas (Django)
+# ==============================================================================
+
+# ── Variables de entorno y secretos ───────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# ── Entornos virtuales ────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+gestor_tareas_env/
+
+# ── Django ────────────────────────────────────────────────────────────────
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+local_settings.py
+
+# ── Cobertura / tests ─────────────────────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ── Sistema operativo ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Editores / IDE ────────────────────────────────────────────────────────
+*.swp
+*.swo
+.idea/
+# .vscode/ se mantiene versionado a propósito (settings compartidos del repo)
